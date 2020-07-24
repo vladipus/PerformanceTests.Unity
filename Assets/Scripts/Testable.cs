@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Testable : MonoBehaviour
 {
-    public const int clonesCount = 16;
+    public const int clonesCount = 128;
     public const int Max = 1000;
     public static Vector3 center = Vector3.zero;
 
