@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Testable : MonoBehaviour
 {
-    public const int clonesCount = 128;
+    public const int clonesCount = 1024 << 4;
     public const int Max = 1000;
     public static Vector3 center = Vector3.zero;
 
@@ -12,6 +13,8 @@ public class Testable : MonoBehaviour
     public Vector3 acceleration = Vector3.zero;
     public Vector3 velocity = Vector3.zero;
 #endif
+
+    public float x = 0;
 
     public float mass = 1;
 
@@ -38,6 +41,7 @@ public class Testable : MonoBehaviour
         var renderers = GetComponentsInChildren<Renderer>();
         foreach (var r in renderers)
         {
+            r.enabled = false;
             bounds.Encapsulate(r.bounds);
         }
         mass = bounds.size.x * bounds.size.y * bounds.size.z;
@@ -61,9 +65,19 @@ public class Testable : MonoBehaviour
             clone.transform.localRotation = Random.rotationUniform;
         }
     }
+#endif
 
+#if UPDATE_MANAGER && FORCE_FUNCTION
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void CustomUpdate()
+#elif !UPDATE_MANAGER
     void Update()
+#endif
+#if !UPDATE_MANAGER || FORCE_FUNCTION
     {
+#if TRIVIAL
+        x += 1;
+#else
         var t = this;
 
         var position = transform.position;
@@ -80,6 +94,7 @@ public class Testable : MonoBehaviour
 
         acceleration = (center - position) * 0.5f;
 
+#if !NO_INTERACTION
         foreach (var other in Testable.All)
         {
             if (other == this) continue;
@@ -89,8 +104,10 @@ public class Testable : MonoBehaviour
             var dir = delta / distance;
             t.acceleration -= dir * 0.01f / distance;
         }
-
-        acceleration /= mass * 10;
-    }
 #endif
+
+        acceleration /= mass * 10; 
+#endif // !TRIVIAL
+    }
+#endif // !UPDATE_MANAGER || !FORCE_FUNCTION
 }

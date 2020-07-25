@@ -119,6 +119,7 @@ public class TestableManager : MonoBehaviour
 
                 result.acceleration = (center - result.position) * 0.5f;
 
+#if !NO_INTERACTION
                 for (int j = 0; j < Input.Length; j++)
                 {
                     if (i == j) continue;
@@ -129,6 +130,7 @@ public class TestableManager : MonoBehaviour
                     var dir = delta / distance;
                     result.acceleration -= dir * 0.01f / distance;
                 }
+#endif
 
                 result.acceleration /= result.mass * 10;
 
@@ -147,6 +149,12 @@ public class TestableManager : MonoBehaviour
     {
         foreach (var t in Testable.All)
         {
+#if FORCE_FUNCTION
+            t.CustomUpdate();
+#else
+#if TRIVIAL
+            t.x += 1;
+#else
             var position = t.transform.position;
             position += t.velocity * Time.deltaTime;
 
@@ -161,6 +169,7 @@ public class TestableManager : MonoBehaviour
 
             t.acceleration = (Testable.center - position) * 0.5f;
 
+#if !NO_INTERACTION
             foreach (var other in Testable.All)
             {
                 if (other == this) continue;
@@ -170,8 +179,11 @@ public class TestableManager : MonoBehaviour
                 var dir = delta / distance;
                 t.acceleration -= dir * 0.01f / distance;
             }
+#endif
 
             t.acceleration /= t.mass * 10;
+#endif
+#endif
         }
     }
 

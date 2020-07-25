@@ -10,6 +10,6 @@ public class TestableCounter : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         var t = GetComponent<Text>();
-        t.text = "Count: " + Testable.All.Count;
+        t.text = "Count: " + CacheTests.Count;
     }
 }
