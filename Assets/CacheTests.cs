@@ -33,7 +33,7 @@ public class CacheTests : MonoBehaviour
         classes = new ClassData[Count];
         for (int i = 0; i < classes.Length; i++)
             classes[i] = new ClassData();
-        // classes = classes.OrderBy(a => Guid.NewGuid()).ToArray();
+        classes = classes.OrderBy(a => Guid.NewGuid()).ToArray();
         structs = new NativeArray<StructData>(Count, Allocator.Persistent);
     }
 
